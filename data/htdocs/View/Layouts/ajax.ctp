@@ -1,8 +1,8 @@
 <?php
 /**
  * @link          https://cakephp.org CakePHP(tm) Project
- * @package       app
+ * @package       app.View.Layouts
  * @since         CakePHP(tm) v 0.10.0.1076
  */
-
-require 'webroot' . DIRECTORY_SEPARATOR . 'index.php';
+?>
+<?php echo $this->fetch('content'); ?>
