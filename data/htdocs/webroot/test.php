@@ -17,6 +17,8 @@ if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
 
+define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . APP_DIR . DS . 'vendor' . DS . 'pear-pear.cakephp.org' . DS . 'CakePHP');
+
 /**
  * These defines should only be edited if you have CakePHP installed in
  * a directory layout other than the way it is distributed.

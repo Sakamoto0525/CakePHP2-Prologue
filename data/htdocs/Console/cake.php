@@ -16,24 +16,24 @@
  * @since         CakePHP(tm) v 2.0
  */
 
-if (!defined('DS')) {
-	define('DS', DIRECTORY_SEPARATOR);
-}
-
-$dispatcher = 'Cake' . DS . 'Console' . DS . 'ShellDispatcher.php';
+// if (!defined('$ds')) {
+// 	define('$ds', DIRECTORY_SEPARATOR);
+// }
+$ds = DIRECTORY_SEPARATOR;
+$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 
 if (function_exists('ini_set')) {
 	$root = dirname(dirname(dirname(__FILE__)));
 	$appDir = basename(dirname(dirname(__FILE__)));
-	$install = $root . DS . 'lib';
-	$composerInstall = $root . DS . $appDir . DS . 'Vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib';
+	$install = $root . $ds . 'lib';
+	$composerInstall = $root . $ds . $appDir . $ds . 'Vendor' . $ds . 'cakephp' . $ds . 'cakephp' . $ds . 'lib';
 
 	// the following lines differ from its sibling
 	// /app/Console/cake.php
-	if (file_exists($composerInstall . DS . $dispatcher)) {
+	if (file_exists($composerInstall . $ds . $dispatcher)) {
 		$install = $composerInstall;
-	} elseif (!file_exists($install . DS . $dispatcher)) {
-		$install = $root . PATH_SEPARATOR .  DS . 'var' . DS . 'www' . DS . 'html' . DS . 'Vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'lib';
+	} elseif (!file_exists($install . $ds . $dispatcher)) {
+		$install = $root . PATH_SEPARATOR .  $ds . 'var' . $ds . 'www' . $ds . 'html' . $ds . 'Vendor' . $ds . 'cakephp' . $ds . 'cakephp' . $ds . 'lib';
 	}
 
 	ini_set('include_path', $install . PATH_SEPARATOR . ini_get('include_path'));
@@ -46,3 +46,5 @@ if (!include $dispatcher) {
 unset($dispatcher);
 
 return ShellDispatcher::run($argv);
+
+
