@@ -1,47 +1,66 @@
-version: '3'
-
+version: "3"
 services:
-  web:
-    container_name: web
-    build:
-      context: ./docker/php
-    ports:
-      - "80:80"
+  mysql:
+    image: mysql:5.7
+    restart: always
     volumes:
-      - ./:/app
-      - ./logs:/var/log/nginx
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-
-  db:
-    image: mysql:5.6
+      - "./data/mysql/db:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: "Asia/Tokyo"
     ports:
       - "3306:3306"
-    volumes:
-      - db-store:/var/lib/mysql
-      - ./logs:/var/log/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
     environment:
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASS}
-      - MYSQL_ROOT_PASSWORD=${DB_PASS}
-      - TZ=${TZ}
-
-  db-testing:
-    image: mysql:5.6
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    links:
+      - mysql
     ports:
-      - "3307:3307"
+       - "8080:80"
     volumes:
-      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
-    tmpfs:
-      - /var/lib/mysql
-      - /var/log/mysql
+       - /sessions
+  nginx:
+    restart: always
+    image: "nginx"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./data/nginx/conf:/etc/nginx/"
+      - "./data/htdocs:/var/www/html"
     environment:
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASS}
-      - MYSQL_ROOT_PASSWORD=${DB_PASS}
-      - TZ=${TZ}
-    
-volumes:
-  db-store:
+      TZ: "Asia/Tokyo"
+    depends_on:
+      - phpfpm
+    links:
+      - phpfpm
+  phpfpm:
+    image: php:5.6-fpm
+    build: ./data/phpfpm/
+    environment:
+      TZ: "Asia/Tokyo"
+    volumes:
+      - "./data/htdocs:/var/www/html"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+  host:
+    build: ./data/htdocs
+    environment:
+      TZ: "Asia/Tokyo"
+      PRJ: "tmp"
+    volumes:
+      - "./data/htdocs:/root"
+    ports:
+      - "8765:80"
+    depends_on:
+      - mysql
+      - phpfpm
+    links:
+      - mysql
+      - phpfpm
